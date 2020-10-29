@@ -1,0 +1,53 @@
+﻿@page "/loginpage"
+@layout LoginLayout
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<h3>Oturum açma</h3>
+
+<div class="col">
+    <div class="alert-warning" style="margin: 20px">
+        @HataIletisi
+    </div>
+    <div class="form-group" style="margin: 20px">
+        <div class="col-4">
+            <label>Eposta adresi</label>
+        </div>
+        <div class="col-8">
+            <input type="email" @bind="eposta" />
+        </div>
+    </div>
+    <div class="form-group" style="margin: 20px">
+        <div class="col-4">
+            <label>Parola</label>
+        </div>
+        <div class="col-8">
+            <input type="password" @bind="parola" />
+        </div>
+    </div>
+    <br />
+    <button class="btn btn-primary" @onclick="OturumAc">Oturum aç</button>
+</div>
+
+
+@code {
+
+    string eposta = "";
+    string parola = "";
+    string HataIletisi = "";
+
+    void OturumAc()
+    {
+        var asp = AuthenticationStateProvider as CustomAuthStateProvider;
+        var basarili = asp.Login(eposta, parola);
+        if (!basarili)
+        {
+            HataIletisi = "Kullanıcı adı veya parolanız hatalı";
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
+}

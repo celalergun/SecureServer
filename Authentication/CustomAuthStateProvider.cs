@@ -20,20 +20,24 @@ namespace SecureServer.Authentication
             return Task.FromResult(new AuthenticationState(LoggedInUser));
         }
 
-        public void Login(string eposta, string parola)
+        public bool Login(string eposta, string parola)
         {
+            Logout();
+
             if (!(eposta == "celalergun@gmail.com" && parola == "123456"))
-                return;
+                return false;
 
             IsLogin = true;
             ClaimsIdentity identity = new ClaimsIdentity(new[]
                 {
                     new Claim(ClaimTypes.Name, "Celal Ergün"),
+                    new Claim(ClaimTypes.Email, "celalergun@gmail.com"),
                 }, "My fancy authentication type");
 
             ClaimsPrincipal user = new ClaimsPrincipal(identity);
             LoggedInUser = user;
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+            return true;
         }
 
         public void Logout()
