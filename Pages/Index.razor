@@ -1,0 +1,68 @@
+﻿@page "/"
+@using SecureServer.Authentication
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<button @onclick="LogUsername">Kimim ben</button>
+
+<br />
+<p>@_authMessage</p>
+
+<br />
+<button @onclick="LoginUser">Oturum aç</button>
+<br />
+<button @onclick="LogoutUser">Oturumu kapat</button>
+<br />
+
+<AuthorizeView>
+    <Authorized>
+        <h1>Merhaba, @context.User.Identity.Name!</h1>
+        <p>Eğer oturum açtıysanız bu iletiyi görebileceksiniz.</p>
+    </Authorized>
+    <NotAuthorized>
+        <h1>Kimlik hatası!</h1>
+        <p>Oturum açmamışsınız.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+
+    private string _authMessage;
+
+    private async Task LogUsername()
+    {
+        var x = AuthenticationStateProvider as SecureServer.Authentication.CustomAuthStateProvider;
+        var authState = await x.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            _authMessage = $"{user.Identity.Name} oturum açmış.";
+        }
+        else
+        {
+            _authMessage = "Kullanıcı oturum açmamış.";
+        }
+    }
+
+    public async Task LoginUser()
+    {
+        await Task.Run(() =>
+        {
+            var x = AuthenticationStateProvider as CustomAuthStateProvider;
+            x.Login("celalergun@gmail.com", "123456");
+
+        });
+    }
+
+    public async Task LogoutUser()
+    {
+        await Task.Run(() =>
+        {
+            var x = AuthenticationStateProvider as CustomAuthStateProvider;
+            x.Logout();
+
+        });
+    }
+
+}
